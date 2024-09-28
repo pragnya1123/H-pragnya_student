@@ -1,0 +1,111 @@
+import csv
+import os
+
+# File name for storing movie data
+file_name = 'movie_archive.csv'
+
+# Function to check if the CSV file exists
+def check_file():
+    if not os.path.exists(file_name):
+        with open(file_name, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Title", "Director", "Year"])
+
+# Function to add a new movie
+def add_movie(title, director, year):
+    with open(file_name, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([title, director, year])
+    print(f"Movie '{title}' added successfully!")
+
+# Function to display all movies
+def display_movies():
+    with open(file_name, mode='r') as file:
+        reader = csv.reader(file)
+        movies = list(reader)
+        if len(movies) > 1:
+            print(f"{'Title':<25} {'Director':<20} {'Year':<10}")
+            print('-' * 55)
+            for movie in movies[1:]:
+                print(f"{movie[0]:<25} {movie[1]:<20} {movie[2]:<10}")
+        else:
+            print("No movies in the archive.")
+
+# Function to update a movie
+def update_movie(old_title, new_title, new_director, new_year):
+    updated = False
+    with open(file_name, mode='r') as file:
+        movies = list(csv.reader(file))
+        
+    with open(file_name, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Title", "Director", "Year"])
+        for movie in movies[1:]:
+            if movie[0] == old_title:
+                writer.writerow([new_title, new_director, new_year])
+                updated = True
+            else:
+                writer.writerow(movie)
+                
+    if updated:
+        print(f"Movie '{old_title}' updated successfully!")
+    else:
+        print(f"Movie '{old_title}' not found!")
+
+# Function to delete a movie
+def delete_movie(title):
+    deleted = False
+    with open(file_name, mode='r') as file:
+        movies = list(csv.reader(file))
+        
+    with open(file_name, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Title", "Director", "Year"])
+        for movie in movies[1:]:
+            if movie[0] == title:
+                deleted = True
+            else:
+                writer.writerow(movie)
+    
+    if deleted:
+        print(f"Movie '{title}' deleted successfully!")
+    else:
+        print(f"Movie '{title}' not found!")
+
+# Main function to drive the system
+def main():
+    check_file()
+    
+    while True:
+        print("\nHistoric Movie Archive System")
+        print("1. Add Movie")
+        print("2. Display Movies")
+        print("3. Update Movie")
+        print("4. Delete Movie")
+        print("5. Exit")
+        choice = input("Enter your choice (1-5): ")
+        
+        if choice == '1':
+            title = input("Enter movie title: ")
+            director = input("Enter director name: ")
+            year = input("Enter year of release: ")
+            add_movie(title, director, year)
+        elif choice == '2':
+            display_movies()
+        elif choice == '3':
+            old_title = input("Enter the title of the movie to update: ")
+            new_title = input("Enter new title: ")
+            new_director = input("Enter new director: ")
+            new_year = input("Enter new year: ")
+            update_movie(old_title, new_title, new_director, new_year)
+        elif choice == '4':
+            title = input("Enter the title of the movie to delete: ")
+            delete_movie(title)
+        elif choice == '5':
+            print("Exiting system. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
